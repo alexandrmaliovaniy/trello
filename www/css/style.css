@@ -57,7 +57,7 @@ body {
 #wrapper header .active {
     border-bottom: 2px solid rgb(42, 87, 145);
 }
-#wrapper #table {
+#wrapper #home {
     float: left;
     width: 100%;
     height: calc(100% - 40px);
@@ -66,7 +66,7 @@ body {
     flex-wrap: wrap;
     justify-content: flex-start;
 }
-#wrapper #table .tableShortcut {
+#wrapper #home .tableShortcut {
     float: left;
     width: 400px;
     height: 120px;
@@ -82,16 +82,16 @@ body {
     overflow: hidden;
     border-radius: 5px;
 }
-#wrapper #table .tableShortcut:hover  {
+#wrapper #home .tableShortcut:hover  {
     background: rgb(62, 61, 151);
     font-size: 24px;
     box-shadow: 0px 0px 5px rgb(62, 61, 151);
 }
-#wrapper #table #createTable {
+#wrapper #home #createTable {
     background: #ccc;
     justify-content: center;
 }
-#wrapper #table #createTable div {
+#wrapper #home #createTable div {
     width: 40px;
     height: 40px;
     background: #aaa;
@@ -102,7 +102,55 @@ body {
     border-radius: 50%;
     transition: .3s;
 }
-#wrapper #table #createTable:hover div {
+#wrapper #home #createTable:hover div {
     transform: scale(1.4, 1.4);
     background: rgb(62, 61, 151);
+}
+
+
+#wrapper #table {
+    float: left;
+    display: flex;
+    flex-wrap: nowrap;
+    align-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+    height: calc(100% - 40px);
+    padding: 50px 0px 0px 5%;
+    overflow-x: auto;
+}
+
+#wrapper #table .taskTable {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 300px;
+    background: #eee;
+    color: #333;
+    margin-right: 10px;
+    border-radius: 5px;
+}
+#wrapper #table .taskTable .title {
+    float: left;
+    width: 100%;
+    font-size: 20px;
+    padding: 10px;
+}
+#wrapper #table .taskTable ul.tasks {
+    float: left;
+    width: 100%;
+    list-style-type: none;
+    margin-top: 10px;
+}
+#wrapper #table .taskTable ul.tasks .task {
+    float: left;
+    width: 94%;
+    height: 36px;
+    background: #fff;
+    margin: 0px 3% 10px 3%;
+    border-radius: 5px;
+    padding-left: 5%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    border-bottom: 1px solid #ccc;
 }
