@@ -84,8 +84,9 @@ body {
 }
 #wrapper #table #createTable {
     background: #ccc;
+    justify-content: center;
 }
-#wrapper #table #createTable span {
+#wrapper #table #createTable div {
     width: 40px;
     height: 40px;
     background: #aaa;
@@ -94,14 +95,9 @@ body {
     line-height: 40px;
     font-size: 30px;
     border-radius: 50%;
-    margin-left: calc(50% - 20px);
     transition: .3s;
 }
-#wrapper #table #createTable:hover span {
-    width: 50px;
-    height: 50px;
-    margin-left: calc(50% - 25px);
-    font-size: 35px;
-    line-height: 50px;
+#wrapper #table #createTable:hover div {
+    transform: scale(1.4, 1.4);
     background: rgb(62, 61, 151);
 }
