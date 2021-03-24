@@ -13,6 +13,55 @@ body {
     overflow: hidden;
 }
 
+
+#modal {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#modal #nameField {
+    width: 500px;
+    height: 40px;
+    background: #fff;
+    box-shadow: 0px 0px 5px #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+#modal #nameField #modalName {
+    width: calc(100% - 40px);
+    height: 40px;
+    
+    border: none;
+    border-left: 2px solid #ccc;
+    border-top: 2px solid #ccc;
+    border-bottom: 2px solid #ccc;
+    padding-left: 10px;
+    outline: none;
+}
+#modal #nameField #submitInput {
+    float: left;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 0px 5px 5px 0px;
+    border-right: 2px solid #ccc;
+    border-top: 2px solid #ccc;
+    border-bottom: 2px solid #ccc;
+    transition: .2s;
+}
+#modal #nameField #submitInput:hover {
+    background: rgb(42, 87, 145);
+}
+
 #wrapper {
     float: left;
 }
@@ -57,7 +106,7 @@ body {
 #wrapper header .active {
     border-bottom: 2px solid rgb(42, 87, 145);
 }
-#wrapper #home {
+#wrapper #display #home {
     float: left;
     width: 100%;
     height: calc(100% - 40px);
@@ -66,7 +115,19 @@ body {
     flex-wrap: wrap;
     justify-content: flex-start;
 }
-#wrapper #home .tableShortcut {
+#wrapper #display #table {
+    float: left;
+    display: flex;
+    flex-wrap: nowrap;
+    align-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+    height: calc(100% - 40px);
+    padding: 50px 0px 0px 5%;
+    overflow-x: auto;
+}
+
+#wrapper #display #home .tableShortcut {
     float: left;
     width: 400px;
     height: 120px;
@@ -82,16 +143,16 @@ body {
     overflow: hidden;
     border-radius: 5px;
 }
-#wrapper #home .tableShortcut:hover  {
+#wrapper #display #home .tableShortcut:hover  {
     background: rgb(62, 61, 151);
     font-size: 24px;
     box-shadow: 0px 0px 5px rgb(62, 61, 151);
 }
-#wrapper #home #createTable {
+#wrapper #display #home #createTable {
     background: #ccc;
     justify-content: center;
 }
-#wrapper #home #createTable div {
+#wrapper #display #home #createTable div {
     width: 40px;
     height: 40px;
     background: #aaa;
@@ -102,13 +163,13 @@ body {
     border-radius: 50%;
     transition: .3s;
 }
-#wrapper #home #createTable:hover div {
+#wrapper #display #home #createTable:hover div {
     transform: scale(1.4, 1.4);
     background: rgb(62, 61, 151);
 }
 
 
-#wrapper #table {
+#wrapper #display #table {
     float: left;
     display: flex;
     flex-wrap: nowrap;
@@ -120,7 +181,7 @@ body {
     overflow-x: auto;
 }
 
-#wrapper #table .taskTable {
+#wrapper #display #table .taskTable {
     flex-grow: 0;
     flex-shrink: 0;
     flex-basis: 300px;
@@ -129,19 +190,19 @@ body {
     margin-right: 10px;
     border-radius: 5px;
 }
-#wrapper #table .taskTable .title {
+#wrapper #display #table .taskTable .title {
     float: left;
     width: 100%;
     font-size: 20px;
     padding: 10px;
 }
-#wrapper #table .taskTable ul.tasks {
+#wrapper #display #table .taskTable ul.tasks {
     float: left;
     width: 100%;
     list-style-type: none;
     margin-top: 10px;
 }
-#wrapper #table .taskTable ul.tasks .task {
+#wrapper #display #table .taskTable ul.tasks .task {
     float: left;
     width: 94%;
     height: 36px;
