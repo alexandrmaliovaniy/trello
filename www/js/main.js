@@ -13,6 +13,7 @@ if (data == null) {
 // Init
 function InitTabs(tabs = []) {
     const home = CreateTab("Home", function() {
+        SetActiveTab(home);
         InitHomePage(data.tables);
     });
     home.id = "homeTable";
@@ -24,6 +25,7 @@ function InitTabs(tabs = []) {
             SetActiveTab(tab);
             InitTablePage(tabs[i]);
         });
+        tab.tableId = tabs[i].id;
         header.appendChild(tab);
     }
 }
@@ -36,8 +38,9 @@ function InitHomePage(tables = []) {
     homeTable.id = "home";
     for (let i = 0; i < tables.length; i++) {
         let short = CreateTableShortcut(tables[i].name, function() {
-            AddTab(tables[i]);
-            InitTablePage()
+            const tab = AddTab(tables[i]);
+            tab.onclick();
+            // InitTablePage(tables[i]);
         });
         homeTable.appendChild(short);
     }
@@ -57,8 +60,24 @@ function InitTablePage(table = {}) {
  
 
 // Add
-function AddTab(table = []) {
+function AddTab(table = {}) {
+    const tabs = document.querySelectorAll(".tableLink");
 
+    for (let i = 0; i < tabs.length; i++) {
+        if (tabs[i].tableId == table.id) {
+            SetActiveTab(tabs[i]);
+            return tabs[i];
+        }
+    }
+    const newTab = CreateTab(table.name, function() {
+        SetActiveTab(newTab);
+        InitTablePage(table);
+    });
+    newTab.tableId = table.id;
+    header.appendChild(newTab);
+    data.tabs.push({name: table.name, id:table.id});
+    Save();
+    return newTab;
 }
 
 

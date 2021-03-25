@@ -75,9 +75,13 @@ body {
     cursor: pointer;
     transition: .4s;
     border-bottom: 2px solid transparent;
+    padding-left: 20px;
 }
 #wrapper header .tableLink:hover {
     border-bottom: 2px solid #ccc;
+}
+#wrapper header .tableLink:first-child {
+    padding-left: 0px;
 }
 #wrapper header .tableLink div {
     float: right;
