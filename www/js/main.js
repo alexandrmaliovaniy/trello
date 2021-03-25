@@ -12,8 +12,11 @@ if (data == null) {
 
 // Init
 function InitTabs(tabs = []) {
-    const home = CreateTab("Home", InitHomePage);
+    const home = CreateTab("Home", function() {
+        InitHomePage(data.tables);
+    });
     home.id = "homeTable";
+    home.classList.add('active');
     header.appendChild(home);
 
     for (let i = 0; i < tabs.length; i++) {
@@ -26,6 +29,9 @@ function InitTabs(tabs = []) {
 }
 
 function InitHomePage(tables = []) {
+    tables.sort(function(a, b) {
+        return a.lastVisit < b.lastVisit;
+    })
     let homeTable = document.createElement("div");
     homeTable.id = "home";
     for (let i = 0; i < tables.length; i++) {
@@ -46,7 +52,7 @@ function InitHomePage(tables = []) {
     display.appendChild(homeTable);
 }
 function InitTablePage(table = {}) {
-    
+
 }
  
 
@@ -99,8 +105,7 @@ function CreateModal(oninput=function(){}) {
 }
 
 function CreateTable(name) {
-    
-    data.tables.push({name:name, id:data.tables.length});
+    data.tables.push({name:name, id:data.tables.length, lastVisit:Date.now()});
     Save();
     InitHomePage(data.tables);
 }

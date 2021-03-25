@@ -2,6 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    user-select: none;
 }
 html, body, #wrapper {
     width: 100%;
@@ -12,8 +13,6 @@ body {
     font-family: Arial, Helvetica, sans-serif;
     overflow: hidden;
 }
-
-
 #modal {
     position: absolute;
     width: 100%;
@@ -39,7 +38,6 @@ body {
 #modal #nameField #modalName {
     width: calc(100% - 40px);
     height: 40px;
-    
     border: none;
     border-left: 2px solid #ccc;
     border-top: 2px solid #ccc;
@@ -61,7 +59,6 @@ body {
 #modal #nameField #submitInput:hover {
     background: rgb(42, 87, 145);
 }
-
 #wrapper {
     float: left;
 }
@@ -103,6 +100,9 @@ body {
     color: #fff;
     background: rgb(255, 45, 45);
 }
+#wrapper header .tableLink:first-child div {
+    display: none;
+}
 #wrapper header .active {
     border-bottom: 2px solid rgb(42, 87, 145);
 }
@@ -126,7 +126,6 @@ body {
     padding: 50px 0px 0px 5%;
     overflow-x: auto;
 }
-
 #wrapper #display #home .tableShortcut {
     float: left;
     width: 400px;
@@ -167,8 +166,6 @@ body {
     transform: scale(1.4, 1.4);
     background: rgb(62, 61, 151);
 }
-
-
 #wrapper #display #table {
     float: left;
     display: flex;
@@ -180,7 +177,6 @@ body {
     padding: 50px 0px 0px 5%;
     overflow-x: auto;
 }
-
 #wrapper #display #table .taskTable {
     flex-grow: 0;
     flex-shrink: 0;
