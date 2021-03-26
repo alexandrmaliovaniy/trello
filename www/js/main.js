@@ -1,6 +1,34 @@
 const header = document.querySelector("header");
 const display = document.querySelector("#display");
 
+
+
+/*
+
+{
+    tabs: {
+        id : {
+            name: string
+        }
+    }
+
+    tables: {
+        id: {
+            name: string
+            data: {
+                id: {
+                    title: string 
+                    items: {}
+                }
+            }
+        }
+    }
+}
+
+
+*/
+
+
 class Storage {
     static Parse(data) {
         let res = {
@@ -35,6 +63,13 @@ class Storage {
         this.data.tabs.push(tab);
         this.Save();
         return tab;
+    }
+    AddNewList(title, tableID) {
+        const list = new List(title, tableID, []);
+        console.log(tableID);
+        this.data.tables[tableID].data.push(list);
+        this.Save();
+        return list;
     }
     Set(cb) {
         cb(this.data);
@@ -71,14 +106,16 @@ class Tab {
         tab.tableID = this.id;
         return tab;
     }
-
 }
 
 class Table {
-    constructor(id, name, data = {}, lastVisit) {
+    constructor(id, name, data = [], lastVisit) {
         this.id = id;
         this.name = name;
-        this.data = data;
+        this.data = [];
+        for (let i = 0; i < data.length; i++) {
+            this.data[i] = new List(data[i].title, this.id, data[i].items);
+        }
         this.lastVisit = lastVisit || Date.now();
     }
     ShortHTML(onclick = function(){}) {
@@ -114,6 +151,75 @@ class Modal {
         nameField.appendChild(btn);
         modal.appendChild(nameField);
         document.body.appendChild(modal);
+    }
+}
+
+class List {
+    constructor(title = '', id = 0, items = []) {
+        this.title = title;
+        this.id = id;
+        this.items = [];
+        items.forEach(element => {
+            this.items.push(new ListItem(element));
+        });
+    }
+    GetHTML(onchange = function(){}) {
+        const taskTable = document.createElement('div');
+        taskTable.classList.add("taskTable");
+        const title = document.createElement('div');
+        title.classList.add("title");
+        title.innerText = this.title;
+        title.ondblclick = () => {
+            title.setAttribute("contenteditable", "true");
+            title.onblur = () => {
+                this.title = title.innerText;
+                title.onblur = function(){};
+                title.setAttribute("contenteditable", "false");
+                onchange();
+            }
+        }
+        const tasks = document.createElement('ul');
+        tasks.classList.add('tasks');
+        for (let i = 0; i < this.items.length; i++) {
+            tasks.appendChild(this.items[i].GetHTML(onchange));
+        }
+
+        const newItem = document.createElement('li');
+        newItem.classList.add("new");
+        newItem.innerText = '+';
+        newItem.onclick = () => {
+            const newli = new ListItem({value:"New Item"});
+            this.items.push(newli);
+            const liel = newli.GetHTML(()=> {
+                onchange()
+            });
+            tasks.insertBefore(liel, newItem);
+            onchange();
+        }
+        tasks.appendChild(newItem);
+        taskTable.appendChild(title);
+        taskTable.appendChild(tasks);
+        return taskTable;
+    }
+}
+class ListItem {
+    constructor(item) {
+        this.value = item.value;
+    }
+    GetHTML(onchange = function(){}) {
+        const li = document.createElement("li");
+        li.innerText = this.value;
+        li.classList.add("task");
+        li.ondblclick = () => {
+            li.setAttribute("contenteditable", "true");
+            li.onblur = () => {
+                this.value = li.innerText;
+                li.onblur = function() {};
+                li.setAttribute("contenteditable", "false");
+                onchange();
+            }
+        }
+        return li;
     }
 }
 
@@ -174,9 +280,28 @@ class Display {
         this.InitHome(this.storage.data.tables);
     }
     InitTable(table = {}) {
-        
+        let homeTable = document.createElement("div");
+        homeTable.id = "table";
+        for (let i = 0; i < table.data.length; i++) {
+            let list = table.data[i].GetHTML(()=> {
+                this.storage.Save();
+            });
+            homeTable.appendChild(list);
+        }
+        const addItem = (new List("+", -3)).GetHTML();
+        addItem.onclick = () => {
+            let newList = (this.storage.AddNewList("New List", table.id)).GetHTML(()=> {
+                this.storage.Save();
+            });
+            homeTable.insertBefore(newList, addItem);
+        }
+        addItem.innerHTML = "<div class='add'>+</div>";
+        homeTable.appendChild(addItem);
+        display.innerHTML = "";
+        display.appendChild(homeTable);
     }
-    InitHome(tables = []) {
+    InitHome(unsortedTables = []) {
+        let tables = [...unsortedTables];
         tables.sort(function(a, b) {
             return a.lastVisit < b.lastVisit;
         })
