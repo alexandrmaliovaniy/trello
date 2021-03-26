@@ -11,7 +11,7 @@ class Storage {
             res.tabs[i] = new Tab(data.tabs[i].id, data.tabs[i].name);
         }
         for (let i = 0; i < data.tables.length; i++) {
-            res.tables[i] = new Table(data.tables[i].id, data.tables[i].name, data.tables[i].data);
+            res.tables[i] = new Table(data.tables[i].id, data.tables[i].name, data.tables[i].data, data.tables[i].lastVisit);
         }
         return res;
     }
@@ -49,7 +49,7 @@ class Storage {
             data.tabs[i] = {name: this.data.tabs[i].name, id: this.data.tabs[i].id};
         }
         for (let i = 0; i < this.data.tables.length; i++) {
-            data.tables[i] = {name: this.data.tables[i].name, id: this.data.tables[i].id, data: this.data.tables[i].data};
+            data.tables[i] = {name: this.data.tables[i].name, id: this.data.tables[i].id, data: this.data.tables[i].data, lastVisit: this.data.tables[i].lastVisit};
         }
         localStorage.setItem(this.name, JSON.stringify(data));
     }
@@ -75,10 +75,11 @@ class Tab {
 }
 
 class Table {
-    constructor(id, name, data = {}) {
+    constructor(id, name, data = {}, lastVisit) {
         this.id = id;
         this.name = name;
         this.data = data;
+        this.lastVisit = lastVisit || Date.now();
     }
     ShortHTML(onclick = function(){}) {
         const shortcut = document.createElement('div');
@@ -128,7 +129,6 @@ class Display {
         this.InitHome(this.storage.data.tables);
     }
     SetActiveTab(tab) {
-        console.log(tab);
         if (this.activeTab) {
             this.activeTab.classList.remove("active");
         }
@@ -174,7 +174,7 @@ class Display {
         this.InitHome(this.storage.data.tables);
     }
     InitTable(table = {}) {
-
+        
     }
     InitHome(tables = []) {
         tables.sort(function(a, b) {
