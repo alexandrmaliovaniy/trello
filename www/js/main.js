@@ -32,9 +32,11 @@ const display = document.querySelector("#display");
 class Storage {
     static Parse(data) {
         let res = {
+            currentTab: null,
             tabs:[],
             tables:[]
         };
+        res.currentTab = data.currentTab;
         for (let i = 0; i < data.tabs.length; i++) {
             res.tabs[i] = new Tab(data.tabs[i].id, data.tabs[i].name);
         }
@@ -77,9 +79,11 @@ class Storage {
     }
     Save() {
         let data = {
+            currentTab: null,
             tabs: [],
             tables: []
         }
+        data.currentTab = this.data.currentTab;
         for (let i = 0; i < this.data.tabs.length; i++) {
             data.tabs[i] = {name: this.data.tabs[i].name, id: this.data.tabs[i].id};
         }
@@ -151,6 +155,7 @@ class Modal {
         nameField.appendChild(btn);
         modal.appendChild(nameField);
         document.body.appendChild(modal);
+        input.focus();
     }
 }
 
@@ -232,7 +237,11 @@ class Display {
     }
     Init() {
         this.InitTabs(this.storage.data.tabs);
-        this.InitHome(this.storage.data.tables);
+        if (this.storage.data.currentTab != null) {
+            this.InitTable(this.storage.data.tables[this.storage.data.currentTab]);
+        } else {
+            this.InitHome(this.storage.data.tables);
+        }
     }
     SetActiveTab(tab) {
         if (this.activeTab) {
@@ -280,6 +289,10 @@ class Display {
         this.InitHome(this.storage.data.tables);
     }
     InitTable(table = {}) {
+        this.storage.data.currentTab = table.id;
+        this.AddTab(table.id);
+        table.lastVisit = Date.now();
+        this.storage.Save();
         let homeTable = document.createElement("div");
         homeTable.id = "table";
         for (let i = 0; i < table.data.length; i++) {
@@ -301,6 +314,8 @@ class Display {
         display.appendChild(homeTable);
     }
     InitHome(unsortedTables = []) {
+        this.storage.data.currentTab = null;
+        this.storage.Save();
         let tables = [...unsortedTables];
         tables.sort(function(a, b) {
             return a.lastVisit < b.lastVisit;
