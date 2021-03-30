@@ -2,33 +2,6 @@ const header = document.querySelector("header");
 const display = document.querySelector("#display");
 
 
-
-/*
-
-{
-    tabs: {
-        id : {
-            name: string
-        }
-    }
-
-    tables: {
-        id: {
-            name: string
-            data: {
-                id: {
-                    title: string 
-                    items: {}
-                }
-            }
-        }
-    }
-}
-
-
-*/
-
-
 class Storage {
     static Parse(data) {
         let res = {
@@ -103,7 +76,7 @@ class Tab {
         tab.classList.add("tableLink");
         tab.innerText = this.name;
         let cancel = document.createElement("div");
-        cancel.innerText = "x";
+        cancel.innerHTML = "&#x2715";
         cancel.onclick = oncancel(tab);
         tab.appendChild(cancel);
         tab.onclick = onclick;
@@ -175,9 +148,12 @@ class List {
         title.classList.add("title");
         title.innerText = this.title;
         title.ondblclick = () => {
+            title.classList.add("edit");
             title.setAttribute("contenteditable", "true");
+            title.focus();
             title.onblur = () => {
                 this.title = title.innerText;
+                title.classList.remove("edit");
                 title.onblur = function(){};
                 title.setAttribute("contenteditable", "false");
                 onchange();
@@ -216,8 +192,11 @@ class ListItem {
         li.innerText = this.value;
         li.classList.add("task");
         li.ondblclick = () => {
+            li.classList.add("edit");
             li.setAttribute("contenteditable", "true");
+            li.focus();
             li.onblur = () => {
+                li.classList.remove("edit");
                 this.value = li.innerText;
                 li.onblur = function() {};
                 li.setAttribute("contenteditable", "false");

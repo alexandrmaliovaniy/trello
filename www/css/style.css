@@ -87,7 +87,7 @@ body {
     float: right;
     width: 16px;
     height: 16px;
-    font-size: 12px;
+    font-size: 8px;
     background: transparent;
     color: transparent;
     text-align: center;
@@ -200,6 +200,11 @@ body {
     width: 100%;
     font-size: 20px;
     padding: 10px;
+    word-wrap: break-word;
+}
+#wrapper #display #table .taskTable .edit {
+    outline: none;
+    background: rgb(255, 244, 95);
 }
 #wrapper #display #table .taskTable .add {
     font-size: 26px;
@@ -252,6 +257,10 @@ body {
     background: rgb(62, 61, 151);
     color: #fff;
     cursor: pointer;
+}
+#wrapper #display #table .taskTable ul.tasks .edit {
+    background: rgb(255, 244, 95);
+    outline: none;
 }
 
 
