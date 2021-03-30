@@ -77,7 +77,10 @@ class Tab {
         tab.innerText = this.name;
         let cancel = document.createElement("div");
         cancel.innerHTML = "&#x2715";
-        cancel.onclick = oncancel(tab);
+        cancel.onclick = (e) => { 
+            e.stopPropagation();
+            oncancel(tab);
+        };
         tab.appendChild(cancel);
         tab.onclick = onclick;
         tab.tableID = this.id;
@@ -235,14 +238,25 @@ class Display {
             this.InitHome(this.storage.data.tables);
         })
         this.SetActiveTab(home);
-
         this.tabsContrainer.appendChild(home);
-
         for (let i = 0; i < tabs.length; i++) {
             let tab = tabs[i].GetHTML(() => {
                 this.SetActiveTab(tab);
                 this.InitTable(this.storage.data.tables[tabs[i].id]);
-            })
+            }, (tab) => {
+                for (let i = 0; i < this.storage.data.tabs.length; i++) {
+                    if (tab.tableID == this.storage.data.tabs[i].id) {
+                        this.storage.data.tabs = this.storage.data.tabs.slice(0, i).concat(this.storage.data.tabs.slice(i+1, this.storage.data.tabs.length));
+                        this.storage.Save();
+                        break;
+                    }
+                }
+                if (tab.classList.contains("active")) {
+                    this.InitHome(this.storage.data.tables);
+                }
+                tab.remove();
+                
+            });
             this.tabsContrainer.appendChild(tab);
         }
     }
@@ -257,6 +271,19 @@ class Display {
         let newTab = this.storage.AddNewTab(this.storage.data.tables[tableID].name, tableID).GetHTML(()=> {
             this.SetActiveTab(newTab);
             this.InitTable(this.storage.data.tables[tableID])
+        }, (tab) => {
+            for (let i = 0; i < this.storage.data.tabs.length; i++) {
+                if (tab.tableID == this.storage.data.tabs[i].id) {
+                    this.storage.data.tabs = this.storage.data.tabs.slice(0, i).concat(this.storage.data.tabs.slice(i+1, this.storage.data.tabs.length));
+                    this.storage.Save();
+                    break;
+                }
+            }
+            if (tab.classList.contains("active")) {
+                this.InitHome(this.storage.data.tables);
+            }
+            tab.remove();
+            
         });
         newTab.tableID = tableID;
         this.tabsContrainer.appendChild(newTab);
