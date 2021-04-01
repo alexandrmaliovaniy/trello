@@ -350,5 +350,6 @@ class Display {
 }
 
 
-const d = new Display(header, display, new Storage("trello"));
-d.Init();
+(function() {
+    (new Display(header, display, new Storage("trello"))).Init();
+})();
