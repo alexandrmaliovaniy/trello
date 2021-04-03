@@ -239,52 +239,42 @@ class Display {
         })
         this.SetActiveTab(home);
         this.tabsContrainer.appendChild(home);
-        for (let i = 0; i < tabs.length; i++) {
-            let tab = tabs[i].GetHTML(() => {
-                this.SetActiveTab(tab);
-                this.InitTable(this.storage.data.tables[tabs[i].id]);
-            }, (tab) => {
-                for (let i = 0; i < this.storage.data.tabs.length; i++) {
-                    if (tab.tableID == this.storage.data.tabs[i].id) {
-                        this.storage.data.tabs = this.storage.data.tabs.slice(0, i).concat(this.storage.data.tabs.slice(i+1, this.storage.data.tabs.length));
-                        this.storage.Save();
-                        break;
-                    }
-                }
-                if (tab.classList.contains("active")) {
-                    this.InitHome(this.storage.data.tables);
-                }
-                tab.remove();
-                
-            });
-            this.tabsContrainer.appendChild(tab);
+        tabs.forEach((tab) => {
+            let tabWrapper = tab.GetHTML(() => {
+                this.SetActiveTab(tabWrapper);
+                this.InitTable(this.storage.data.tables[tab.id]);
+            }, (tab) => this.RemoveTab(tab));
+            this.tabsContrainer.appendChild(tabWrapper);
+        })
+    }
+    RemoveTab(tab) {
+        for (let i = 0; i < this.storage.data.tabs.length; i++) {
+            if (tab.tableID == this.storage.data.tabs[i].id) {
+                this.storage.data.tabs = this.storage.data.tabs.slice(0, i).concat(this.storage.data.tabs.slice(i+1, this.storage.data.tabs.length));
+                this.storage.Save();
+                break;
+            }
         }
+        if (tab.classList.contains("active")) {
+            this.InitHome(this.storage.data.tables);
+        }
+        tab.remove();
     }
     AddTab(tableID) {
         let tabs = document.querySelectorAll('.tableLink');
-        for (let i = 0; i < tabs.length; i++) {
-            if (tabs[i].tableID == tableID) {
-                this.SetActiveTab(tabs[i]);
-                return tabs[i];
+        let tabExist = false;
+        tabs.forEach((tab)=> {
+            if (tab.tableID == tableID) {
+                this.SetActiveTab(tab);
+                tabExist = true;
             }
-        }
+        })
+        if (tabExist) return;
+
         let newTab = this.storage.AddNewTab(this.storage.data.tables[tableID].name, tableID).GetHTML(()=> {
             this.SetActiveTab(newTab);
             this.InitTable(this.storage.data.tables[tableID])
-        }, (tab) => {
-            for (let i = 0; i < this.storage.data.tabs.length; i++) {
-                if (tab.tableID == this.storage.data.tabs[i].id) {
-                    this.storage.data.tabs = this.storage.data.tabs.slice(0, i).concat(this.storage.data.tabs.slice(i+1, this.storage.data.tabs.length));
-                    this.storage.Save();
-                    break;
-                }
-            }
-            if (tab.classList.contains("active")) {
-                this.InitHome(this.storage.data.tables);
-            }
-            tab.remove();
-            
-        });
+        }, (tab) => this.RemoveTab(tab));
         newTab.tableID = tableID;
         this.tabsContrainer.appendChild(newTab);
         return newTab;
@@ -294,19 +284,24 @@ class Display {
         this.storage.AddNewTable(name);
         this.InitHome(this.storage.data.tables);
     }
-    InitTable(table = {}) {
+    RefreshTable(table) {
         this.storage.data.currentTab = table.id;
         this.AddTab(table.id);
         table.lastVisit = Date.now();
         this.storage.Save();
+    }
+    InitTable(table = {}) {
+        this.RefreshTable(table);
         let homeTable = document.createElement("div");
         homeTable.id = "table";
-        for (let i = 0; i < table.data.length; i++) {
-            let list = table.data[i].GetHTML(()=> {
+
+        table.data.forEach((list) => {
+            let listWrapper = list.GetHTML(() => {
                 this.storage.Save();
             });
-            homeTable.appendChild(list);
-        }
+            homeTable.appendChild(listWrapper);
+        });
+
         const addItem = (new List("+", -3)).GetHTML();
         addItem.onclick = () => {
             let newList = (this.storage.AddNewList("New List", table.id)).GetHTML(()=> {
@@ -316,27 +311,31 @@ class Display {
         }
         addItem.innerHTML = "<div class='add'>+</div>";
         homeTable.appendChild(addItem);
-        display.innerHTML = "";
-        display.appendChild(homeTable);
+
+        this.RenderDisplay(homeTable);
     }
     InitHome(unsortedTables = []) {
         this.storage.data.currentTab = null;
         this.storage.Save();
+
         let tables = [...unsortedTables];
         tables.sort(function(a, b) {
             return a.lastVisit < b.lastVisit;
         })
+
         let homeTable = document.createElement("div");
         homeTable.id = "home";
 
-        for (let i = 0; i < tables.length; i++) {
-            let short = tables[i].ShortHTML(() => {
-                const tab = this.AddTab(tables[i].id);
-                this.SetActiveTab(tab);
-                this.InitTable(tables[i])
+
+        tables.forEach((table) => {
+            let short = table.ShortHTML(() => {
+                const tab = this.AddTab(table.id);
+                this.SetActiveTab(short);
+                this.InitTable(table);
             });
             homeTable.appendChild(short);
-        }
+        })
+
         let newTable = (new Table(-2, "+", {})).ShortHTML(() => {
             (new Modal(document.body)).Init((name)=> {
                 this.AddTable(name);
@@ -344,8 +343,12 @@ class Display {
         })
         newTable.id = "createTable";
         homeTable.appendChild(newTable);
+
+        this.RenderDisplay(homeTable)
+    }
+    RenderDisplay(display) {
         this.displayContainer.innerHTML = "";
-        this.displayContainer.appendChild(homeTable);
+        this.displayContainer.appendChild(display);
     }
 }
 
