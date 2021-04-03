@@ -98,6 +98,15 @@ class Table {
         }
         this.lastVisit = lastVisit || Date.now();
     }
+    static NewTableHTML() {
+        let newTable = (new Table(-2, "+", {})).ShortHTML(() => {
+            (new Modal(document.body)).Init((name)=> {
+                this.AddTable(name);
+            })
+        })
+        newTable.id = "createTable";
+        return newTable;
+    }
     ShortHTML(onclick = function(){}) {
         const shortcut = document.createElement('div');
         shortcut.onclick = onclick;
@@ -143,6 +152,17 @@ class List {
         items.forEach(element => {
             this.items.push(new ListItem(element));
         });
+    }
+    static GetNewListHTML(storage, tableID) {
+        const addItem = (new List("+", -3)).GetHTML();
+        addItem.onclick = () => {
+            let newList = (storage.AddNewList("New List", tableID)).GetHTML(()=> {
+                storage.Save();
+            });
+            addItem.parentElement.insertBefore(newList, addItem);
+        }
+        addItem.innerHTML = "<div class='add'>+</div>";
+        return addItem;
     }
     GetHTML(onchange = function(){}) {
         const taskTable = document.createElement('div');
@@ -292,27 +312,19 @@ class Display {
     }
     InitTable(table = {}) {
         this.RefreshTable(table);
-        let homeTable = document.createElement("div");
-        homeTable.id = "table";
+        
+        let tableItems = [];
 
         table.data.forEach((list) => {
             let listWrapper = list.GetHTML(() => {
                 this.storage.Save();
             });
-            homeTable.appendChild(listWrapper);
+            tableItems.push(listWrapper);
         });
 
-        const addItem = (new List("+", -3)).GetHTML();
-        addItem.onclick = () => {
-            let newList = (this.storage.AddNewList("New List", table.id)).GetHTML(()=> {
-                this.storage.Save();
-            });
-            homeTable.insertBefore(newList, addItem);
-        }
-        addItem.innerHTML = "<div class='add'>+</div>";
-        homeTable.appendChild(addItem);
+        tableItems.push(List.GetNewListHTML(this.storage, table.id));
 
-        this.RenderDisplay(homeTable);
+        this.RenderTable(tableItems);
     }
     InitHome(unsortedTables = []) {
         this.storage.data.currentTab = null;
@@ -323,9 +335,7 @@ class Display {
             return a.lastVisit < b.lastVisit;
         })
 
-        let homeTable = document.createElement("div");
-        homeTable.id = "home";
-
+        let tableItems = [];
 
         tables.forEach((table) => {
             let short = table.ShortHTML(() => {
@@ -333,18 +343,26 @@ class Display {
                 this.SetActiveTab(short);
                 this.InitTable(table);
             });
-            homeTable.appendChild(short);
+            tableItems.push(short);
         })
 
-        let newTable = (new Table(-2, "+", {})).ShortHTML(() => {
-            (new Modal(document.body)).Init((name)=> {
-                this.AddTable(name);
-            })
-        })
-        newTable.id = "createTable";
-        homeTable.appendChild(newTable);
+        tableItems.push(Table.NewTableHTML());
 
-        this.RenderDisplay(homeTable)
+        this.RenderHome(tableItems)
+    }
+    RenderHome(content = []) {
+        let homeTable = document.createElement("div");
+        homeTable.id = "home";
+        homeTable.append(...content);
+        this.RenderDisplay(homeTable);
+        return homeTable;
+    }
+    RenderTable(content = []) {
+        let table = document.createElement("div");
+        table.id = "table";
+        table.append(...content);
+        this.RenderDisplay(table);
+        return table;
     }
     RenderDisplay(display) {
         this.displayContainer.innerHTML = "";
