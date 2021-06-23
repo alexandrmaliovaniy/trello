@@ -98,10 +98,10 @@ class Table {
         }
         this.lastVisit = lastVisit || Date.now();
     }
-    static NewTableHTML() {
+    static NewTableHTML(that) {
         let newTable = (new Table(-2, "+", {})).ShortHTML(() => {
             (new Modal(document.body)).Init((name)=> {
-                this.AddTable(name);
+                that.AddTable(name);
             })
         })
         newTable.id = "createTable";
@@ -346,7 +346,7 @@ class Display {
             tableItems.push(short);
         })
 
-        tableItems.push(Table.NewTableHTML());
+        tableItems.push(Table.NewTableHTML(this));
 
         this.RenderHome(tableItems)
     }
@@ -369,8 +369,6 @@ class Display {
         this.displayContainer.appendChild(display);
     }
 }
-
-
 (function() {
     (new Display(header, display, new Storage("trello"))).Init();
 })();

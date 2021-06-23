@@ -113,24 +113,22 @@ body {
 #wrapper #display #home {
     float: left;
     width: 100%;
-    height: calc(100% - 40px);
     padding: 50px 5% 0px 5%;
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
 }
 #wrapper #display #table {
     float: left;
     display: flex;
     flex-wrap: nowrap;
-    align-content: flex-start;
-    align-items: flex-start;
     width: 100%;
     height: calc(100% - 40px);
     padding: 50px 0px 0px 5%;
     overflow-x: auto;
 }
 #wrapper #display #home .tableShortcut {
-    float: left;
     width: 400px;
     height: 120px;
     background: rgb(62, 61, 151);
