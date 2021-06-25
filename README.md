@@ -1,1 +1,3 @@
-# trello
+# Trello clone
+
+* Pure js
